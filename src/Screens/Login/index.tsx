@@ -8,7 +8,12 @@ import { actions } from '../../Redux/UserReducer'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { StyledLoginContainer } from '../../Styled'
-import { StyledForm, StyledFormContainer, StyledTitleContainer } from './styled'
+import {
+  StyledForm,
+  StyledFormContainer,
+  StyledSignUpContainer,
+  StyledTitleContainer,
+} from './styled'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -70,13 +75,6 @@ const Login = () => {
     await handleLogin()
   }
 
-  /*useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/Home')
-    }
-    // eslint-disable-next-line
-  }, [isAuthenticated])*/
-
   return (
     <StyledLoginContainer>
       <StyledTitleContainer>
@@ -84,7 +82,7 @@ const Login = () => {
       </StyledTitleContainer>
       <StyledFormContainer>
         <StyledForm onSubmit={handleFormSubmit}>
-          <Typography variant="body1" style={{ top: 0, marginLeft: 0 }}>
+          <Typography variant="h2" style={{ top: 0, marginLeft: 0 }}>
             Please Login
           </Typography>
 
@@ -121,17 +119,11 @@ const Login = () => {
             Login
           </Button>
         </StyledForm>
-        <Typography variant="body1" sx={{ bottom: 0 }}>
+
+        <Typography variant="body1">
           Dont you have an account? Sign Up
         </Typography>
       </StyledFormContainer>
-      <button
-        onClick={() => {
-          handleLogout()
-        }}
-      >
-        TEST
-      </button>
     </StyledLoginContainer>
   )
 }

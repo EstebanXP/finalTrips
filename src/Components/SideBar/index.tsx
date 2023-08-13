@@ -1,25 +1,51 @@
 import { Container } from './styled'
-import { Drawer } from '@mui/material'
+import {
+  Drawer,
+  List,
+  ListItemButton,
+  Button,
+  ListItem,
+  MenuItem,
+} from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { GlobalState } from '../../Redux/Store'
 import { actions } from '../../Redux/TopBarReducer'
+import { Link } from 'react-router-dom'
 
 const SideBar = () => {
   const { isNavbarOpen } = useSelector((state: GlobalState) => state.topbar)
-  const { closeNavbar } = actions
+  const { closeNavbar, setRoute } = actions
   const dispatch = useDispatch()
+  const routes = ['Home', 'Queries']
 
   const toggleDrawer = () => {
     dispatch(closeNavbar())
   }
+
+  const setRouteOnTop = (route: string) => {
+    dispatch(setRoute(route))
+  }
+
   return (
     <Container>
       <button onClick={toggleDrawer}>qwe</button>
       <Drawer anchor="left" open={isNavbarOpen} onClose={toggleDrawer}>
-        <p>qweqweqew</p>
+        <List>
+          {routes.map((route) => {
+            return (
+              <Link to={`/${route}`}>
+                {' '}
+                <MenuItem
+                  onClick={() => setRouteOnTop(route)}
+                >{`${route}`}</MenuItem>
+              </Link>
+            )
+          })}
+        </List>
       </Drawer>
     </Container>
   )
 }
 
 export default SideBar
+//<ListItemButton>{route}</ListItemButton>

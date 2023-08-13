@@ -1,13 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { TopBarStructure } from '../Utils/Types'
 
 interface TopBarState {
-  route: TopBarStructure | null
+  route: string
   isNavbarOpen: boolean
 }
 
 const initialState: TopBarState = {
-  route: null,
+  route: '',
   isNavbarOpen: false,
 }
 
@@ -22,7 +21,7 @@ const topbarSlice = createSlice({
       state.isNavbarOpen = false
     },
     setRoute: (state, action) => {
-      state.isNavbarOpen = action.payload
+      state.route = action.payload
     },
   },
 })

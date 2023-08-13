@@ -4,12 +4,17 @@ export const theme = createTheme({
   typography: {
     fontFamily: 'Poppins',
     h1: {
+      fontSize: '32px',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      lineHeight: 'normal',
+    },
+    h2: {
       fontSize: '24px',
       fontStyle: 'normal',
       fontWeight: 500,
       lineHeight: 'normal',
     },
-    h2: {},
     h3: {
       fontSize: '18px',
       fontStyle: 'normal',
