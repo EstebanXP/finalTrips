@@ -3,7 +3,6 @@ import { Button, IconButton, TextField, Typography } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { UserCredentails } from '../../Utils/Types'
-import axios from '../../api/axios'
 import { actions } from '../../Redux/UserReducer'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -14,6 +13,7 @@ import {
   StyledSignUpContainer,
   StyledTitleContainer,
 } from './styled'
+import axiosConfig from '../../api/axios'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -31,10 +31,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`/auth/login/`, {
+      const response = await axiosConfig.post(`/auth/login/`, {
         email: userCredentials.email,
         password: userCredentials.password,
       })
+      console.log(response, 'assdssasda')
       dispatch(
         setUserData({
           token: response.data.token,
@@ -124,6 +125,7 @@ const Login = () => {
           Dont you have an account? Sign Up
         </Typography>
       </StyledFormContainer>
+      <button onClick={handleLogout}>qweqweqw</button>
     </StyledLoginContainer>
   )
 }

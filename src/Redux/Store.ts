@@ -5,7 +5,8 @@ import storage from 'redux-persist/lib/storage'
 import { combineReducers } from '@reduxjs/toolkit'
 import { persistReducer } from 'redux-persist'
 import thunk from 'redux-thunk'
-import topbarSlice from './TopBarReducer';
+import topbarSlice from './TopBarReducer'
+import dongleSlice from './DongleReducer'
 
 const persistConfig = {
   key: 'root',
@@ -15,7 +16,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userSlice,
-  topbar: topbarSlice
+  topbar: topbarSlice,
+  dongle: dongleSlice,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

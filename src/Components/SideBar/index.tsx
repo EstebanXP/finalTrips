@@ -2,10 +2,8 @@ import { Container } from './styled'
 import {
   Drawer,
   List,
-  ListItemButton,
-  Button,
-  ListItem,
   MenuItem,
+  Typography,
 } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { GlobalState } from '../../Redux/Store'
@@ -30,10 +28,11 @@ const SideBar = () => {
     <Container>
       <button onClick={toggleDrawer}>qwe</button>
       <Drawer anchor="left" open={isNavbarOpen} onClose={toggleDrawer}>
+        <Typography variant="body1">Menu</Typography>
         <List>
-          {routes.map((route) => {
+          {routes.map((route, index) => {
             return (
-              <Link to={`/${route}`}>
+              <Link key={index} to={`/${route}`} style={{ textDecoration: 'none' }}>
                 {' '}
                 <MenuItem
                   onClick={() => setRouteOnTop(route)}

@@ -79,7 +79,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#F5F5F5',
-          color: "black"
+          color: 'black',
         },
       },
     },
@@ -96,6 +96,13 @@ export const theme = createTheme({
             lineheight: 'normal',
             padding: '1px 2px',
           },
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: 'black', 
         },
       },
     },
