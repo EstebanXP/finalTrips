@@ -15,9 +15,8 @@ const PrivateRoute = () => {
         <CustomTopBar></CustomTopBar>
       </div>
       <SideBar></SideBar>
-      <div >
-        <Outlet></Outlet>
-      </div>
+
+      <Outlet></Outlet>
     </Container>
   ) : (
     <Navigate to="/login" />

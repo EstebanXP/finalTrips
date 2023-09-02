@@ -8,10 +8,12 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { StyledLoginContainer } from '../../Styled'
 import {
+  SignUpTextContainer,
   StyledForm,
   StyledFormContainer,
   StyledSignUpContainer,
   StyledTitleContainer,
+  TitleContainer,
 } from './styled'
 import axiosConfig from '../../api/axios'
 
@@ -83,9 +85,11 @@ const Login = () => {
       </StyledTitleContainer>
       <StyledFormContainer>
         <StyledForm onSubmit={handleFormSubmit}>
-          <Typography variant="h2" style={{ top: 0, marginLeft: 0 }}>
-            Please Login
-          </Typography>
+          <TitleContainer>
+            <Typography variant="h2" style={{ top: 0, marginLeft: 0 }}>
+              Please Login
+            </Typography>
+          </TitleContainer>
 
           <TextField
             id="outlined-basic"
@@ -121,9 +125,33 @@ const Login = () => {
           </Button>
         </StyledForm>
 
-        <Typography variant="body1">
-          Dont you have an account? Sign Up
-        </Typography>
+        <SignUpTextContainer>
+          <Typography
+            variant="body1"
+            style={{
+              display: 'inline-block',
+              alignSelf: 'flex-end',
+            }}
+          >
+            Dont you have an account?
+          </Typography>
+
+          <Typography
+            variant="body1"
+            style={{
+              display: 'inline-block',
+              alignSelf: 'flex-end',
+            }}
+          >
+            <a
+              href="https://www.google.com/"
+              target="_blank"
+              style={{ textDecoration: 'none' }}
+            >
+              Signup
+            </a>
+          </Typography>
+        </SignUpTextContainer>
       </StyledFormContainer>
       <button onClick={handleLogout}>qweqweqw</button>
     </StyledLoginContainer>

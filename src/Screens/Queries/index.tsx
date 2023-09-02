@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import axiosConfig from '../../api/axios'
 import { DatePicker } from 'antd'
+import { Typography, Button } from '@mui/material'
 import { rangePresets } from '../Queries/utils'
 import dayjs, { Dayjs } from 'dayjs'
 import { Trip } from './types'
 import { GlobalState } from '../../Redux/Store'
 import { useSelector } from 'react-redux'
+import { Container, HeaderContainer } from './styled'
+import CardsPagination from '../../Components/CardsPagination'
 const { RangePicker } = DatePicker
 
 const Queries = () => {
@@ -51,18 +54,20 @@ const Queries = () => {
   }, [])
 
   useEffect(() => {
-    //console.log(date)
-    //console.log(filteredData)
-  }, [date, filteredData])
-  useEffect(() => {
     console.log(user)
-  }, [user])
+  }, [user, date, filteredData])
 
   return (
-    <div>
-      Queries
-      <RangePicker presets={rangePresets} onChange={onRangeChange} />
-    </div>
+    <Container>
+      <HeaderContainer>
+        <Typography variant="h2">Last Queries</Typography>
+        <Button>
+          <Typography variant="body2">Add New Query</Typography>
+        </Button>
+      </HeaderContainer>
+      <CardsPagination></CardsPagination>
+      {/*<RangePicker presets={rangePresets} onChange={onRangeChange} />*/}
+    </Container>
   )
 }
 

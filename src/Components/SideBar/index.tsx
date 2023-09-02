@@ -26,7 +26,6 @@ const SideBar = () => {
 
   return (
     <Container>
-      <button onClick={toggleDrawer}>qwe</button>
       <Drawer anchor="left" open={isNavbarOpen} onClose={toggleDrawer}>
         <Typography variant="body1">Menu</Typography>
         <List>

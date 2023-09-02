@@ -16,15 +16,27 @@ export const StyledFormContainer = styled.div`
   border: 1px solid black;
   height: 40vh;
   width: 428px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `
 export const StyledTitleContainer = styled.div`
   position: absolute; /* Positioned absolutely relative to the container */
   top: 0; /* Align at the top */
-  
 `
 export const StyledSignUpContainer = styled.div`
   position: absolute;
   bottom: 0;
-  background-color: red;
   width: 100%;
+`
+export const TitleContainer = styled.div`
+  display: flex;
+  flex: 1;
+  width: 100%;
+`
+export const SignUpTextContainer = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 10px;
 `

@@ -28,7 +28,7 @@ export const theme = createTheme({
       lineHeight: 'normal',
     },
     body2: {
-      fontSize: '14px',
+      fontSize: '12px',
       fontStyle: 'normal',
       fontWeight: 400,
       lineHeight: 'normal',

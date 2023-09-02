@@ -10,7 +10,7 @@ interface Props{
 
 const CustomCard = ({title, children}:Props) => {
   return (
-    <Card sx={{ maxWidth: 275 }}>
+    <Card sx={{ maxWidth: 400 }}>
       <CardContent>
         <Typography variant="h3">{title}</Typography>
       </CardContent>
