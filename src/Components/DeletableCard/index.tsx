@@ -10,6 +10,8 @@ import {
 } from '@mui/material'
 import CardHeader from '@mui/material/CardHeader'
 import { Chip } from '@mui/material'
+import CustomEditModal from '../CustomEditModal'
+import { useState } from 'react'
 
 interface Props {
   title: string
@@ -20,40 +22,56 @@ interface Props {
 }
 
 const DeletableCard = ({ title, date, description, tags, children }: Props) => {
-  return (
-    <Card sx={{ maxWidth: 400, marginBottom: '4rem' }}>
-      <CardHeader
-        titleTypographyProps={{ variant: 'body1' }}
-        subheaderTypographyProps={{ variant: 'body2' }}
-        sx={{ padding: '8px 16px 0px 16px' }}
-        title={title}
-        subheader={date}
-        action={
-          <IconButton>
-            <CloseIcon></CloseIcon>
-          </IconButton>
-        }
-      ></CardHeader>
-      <CardActionArea>
-        <CardContent>
-          <Typography variant="body2">{description}</Typography>
-        </CardContent>
+  const [openModal, setOpenModal] = useState<boolean>(false)
 
-        <CardActions
-          sx={{
-            gap: "10px"
-          }}
-        >
-          {tags.slice(0, 2).map((tag) => {
-            return <Chip key={tag.id} label={tag.name}></Chip>
-          })}
-          {/*remainingItemCount > 0 && <span> +{remainingItemCount} </span>*/}
-          {tags.length - 2 > 0 && (
-            <Typography variant="body2">+{tags.length - 2}</Typography>
-          )}
-        </CardActions>
-      </CardActionArea>
-    </Card>
+  const handleOpenModal = () => {
+    setOpenModal(true)
+  }
+
+  const handleClosenModal = () => {
+    setOpenModal(false)
+  }
+  return (
+    <div>
+      <Card sx={{ maxWidth: 400, marginBottom: '4rem' }}>
+        <CardHeader
+          titleTypographyProps={{ variant: 'body1' }}
+          subheaderTypographyProps={{ variant: 'body2' }}
+          sx={{ padding: '8px 16px 0px 16px' }}
+          title={title}
+          subheader={date}
+          action={
+            <IconButton>
+              <CloseIcon></CloseIcon>
+            </IconButton>
+          }
+        ></CardHeader>
+        <CardActionArea onClick={handleOpenModal}>
+          <CardContent>
+            <Typography variant="body2">{description}</Typography>
+          </CardContent>
+
+          <CardActions
+            sx={{
+              gap: '10px',
+            }}
+          >
+            {tags.slice(0, 2).map((tag) => {
+              return <Chip key={tag.id} label={tag.name}></Chip>
+            })}
+            {/*remainingItemCount > 0 && <span> +{remainingItemCount} </span>*/}
+            {tags.length - 2 > 0 && (
+              <Typography variant="body2">+{tags.length - 2}</Typography>
+            )}
+          </CardActions>
+        </CardActionArea>
+        <CustomEditModal
+          title={title}
+          open={openModal}
+          handleCloseModal={handleClosenModal}
+        ></CustomEditModal>
+      </Card>
+    </div>
   )
 }
 

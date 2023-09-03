@@ -13,6 +13,7 @@ const CustomCard = ({title, children}:Props) => {
     <Card sx={{ maxWidth: 400 }}>
       <CardContent>
         <Typography variant="h3">{title}</Typography>
+        {children}
       </CardContent>
     </Card>
   )

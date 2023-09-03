@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { Button, IconButton, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  IconButton,
+  TextField,
+  Typography,
+} from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { UserCredentails } from '../../Utils/Types'
@@ -11,7 +16,6 @@ import {
   SignUpTextContainer,
   StyledForm,
   StyledFormContainer,
-  StyledSignUpContainer,
   StyledTitleContainer,
   TitleContainer,
 } from './styled'
@@ -120,7 +124,7 @@ const Login = () => {
               ),
             }}
           />
-          <Button type="submit" style={{ width: '100%' }}>
+          <Button variant="contained" color="primary" type="submit" style={{ width: '100%' }}>
             Login
           </Button>
         </StyledForm>
@@ -144,8 +148,9 @@ const Login = () => {
             }}
           >
             <a
-              href="https://www.google.com/"
+              href="https://my.autopi.io/#/login"
               target="_blank"
+              rel="noreferrer"
               style={{ textDecoration: 'none' }}
             >
               Signup

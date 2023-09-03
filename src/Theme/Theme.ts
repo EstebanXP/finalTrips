@@ -56,14 +56,17 @@ export const theme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        root: {
-          backgroundColor: '#1a202cf2',
-          color: '#fff',
-          textTransform: 'unset',
-          outline: '1px solid white',
-          borderRadius: '8px',
+        containedPrimary: {
+          backgroundColor: '#1a202cf2', // Customize the primary contained button background color
+          borderRadius: "8px",
           '&:hover': {
-            backgroundColor: 'gray',
+            backgroundColor: '#4C5566', // Customize the hover state
+          },
+        },
+        containedSecondary: {
+          backgroundColor: 'red', // Customize the secondary contained button background color
+          '&:hover': {
+            backgroundColor: 'darkred', // Customize the hover state
           },
         },
       },
@@ -72,6 +75,21 @@ export const theme = createTheme({
       styleOverrides: {
         paper: {
           width: '250px',
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          padding: '20px', // Adjust the padding as needed,
+          height: "400px"
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          //padding: '0px', // Change the padding
         },
       },
     },

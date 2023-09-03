@@ -9,11 +9,13 @@ import { GlobalState } from '../../Redux/Store'
 import { useSelector } from 'react-redux'
 import { Container, HeaderContainer } from './styled'
 import CardsPagination from '../../Components/CardsPagination'
+import CustomAddModal from '../../Components/CustomAddModal'
 const { RangePicker } = DatePicker
 
 const Queries = () => {
   const [data, setData] = useState<Trip[]>([])
   const { user } = useSelector((state: GlobalState) => state.user)
+  const [openModal, setopenModal] = useState<boolean>(false)
   //const [data, setData] = useState<ApiResponse>()
   const [date, setDate] = useState<string[]>([])
   const getData = async () => {
@@ -49,6 +51,14 @@ const Queries = () => {
     return itemStartTime >= startDate && itemStartTime <= endDate
   })
 
+  const handleOpenModal = () => {
+    setopenModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setopenModal(false)
+  }
+
   useEffect(() => {
     getData()
   }, [])
@@ -61,12 +71,16 @@ const Queries = () => {
     <Container>
       <HeaderContainer>
         <Typography variant="h2">Last Queries</Typography>
-        <Button>
+        <Button variant='contained' color='primary' onClick={handleOpenModal}>
           <Typography variant="body2">Add New Query</Typography>
         </Button>
       </HeaderContainer>
+
+      <CustomAddModal
+        open={openModal}
+        handleCloseModal={handleCloseModal}
+      ></CustomAddModal>
       <CardsPagination></CardsPagination>
-      {/*<RangePicker presets={rangePresets} onChange={onRangeChange} />*/}
     </Container>
   )
 }

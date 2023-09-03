@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { actions as userActions } from '../../Redux/UserReducer'
 import { actions as dongleActions } from '../../Redux/DongleReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -7,21 +6,17 @@ import axiosConfig from '../../api/axios'
 import { useState } from 'react'
 import { ApiResponse } from '../../Utils/Types'
 import CustomCard from '../../Components/CustomCard'
-import { Box } from '@mui/material'
+import { Typography } from '@mui/material'
 import { GlobalState } from '../../Redux/Store'
+import { Container, HeaderContainer } from './styled'
 
 const Home = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [data, setData] = useState<ApiResponse>()
-  const { logout } = userActions
   const { setDongles } = dongleActions
+  const { user } = useSelector((state: GlobalState) => state.user)
   const { dongles } = useSelector((state: GlobalState) => state.dongle)
-
-  const handleLogout = () => {
-    dispatch(logout())
-    navigate('/')
-  }
 
   const getData = async () => {
     try {
@@ -47,17 +42,14 @@ const Home = () => {
   }, [dongles])
 
   return (
-    <div>
-      <button
-        onClick={() => {
-          handleLogout()
-        }}
-      >
-        Logout
-      </button>
-      <Box></Box>
-      <CustomCard title="Dongles Related to this account"></CustomCard>
-    </div>
+    <Container>
+      <HeaderContainer>
+        <Typography variant="h2">{`Welcome back ${user?.first_name}`}</Typography>
+      </HeaderContainer>
+      <CustomCard title="Dongles Related to this account">
+        <Typography variant="body1">{`There is ${dongles.length} dongles related to this account`}</Typography>
+      </CustomCard>
+    </Container>
   )
 }
 
