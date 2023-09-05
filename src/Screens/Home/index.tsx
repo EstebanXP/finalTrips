@@ -21,7 +21,8 @@ const Home = () => {
   const getData = async () => {
     try {
       const { data } = await axiosConfig.get(`/dongle/devices/`)
-      //setData(data)
+      setData(data)
+      
       const dongles = data.results
       dispatch(setDongles(dongles))
       //console.log(data, 'SSSSS')
@@ -38,8 +39,8 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    console.log(dongles, 'AAAAAASSSSHHH')
-  }, [dongles])
+    console.log(data, 'AAAAAASSSSHHH')
+  }, [data])
 
   return (
     <Container>

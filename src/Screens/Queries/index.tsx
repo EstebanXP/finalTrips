@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import axiosConfig from '../../api/axios'
 import { DatePicker } from 'antd'
+import { actions as tripsActions } from '../../Redux/TripsReducer'
 import { Typography, Button } from '@mui/material'
 import { rangePresets } from '../Queries/utils'
 import dayjs, { Dayjs } from 'dayjs'
 import { Trip } from './types'
 import { GlobalState } from '../../Redux/Store'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Container, HeaderContainer } from './styled'
 import CardsPagination from '../../Components/CardsPagination'
 import CustomAddModal from '../../Components/CustomAddModal'
@@ -17,11 +18,14 @@ const Queries = () => {
   const { user } = useSelector((state: GlobalState) => state.user)
   const [openModal, setopenModal] = useState<boolean>(false)
   //const [data, setData] = useState<ApiResponse>()
+  const dispatch  = useDispatch()
+  const {setTrips} = tripsActions
   const [date, setDate] = useState<string[]>([])
   const getData = async () => {
     try {
       const { data } = await axiosConfig.get(`/logbook/trips/`)
       setData(data)
+      dispatch(setTrips(data))
     } catch (error: any) {
       // The request was made and the server responded with a status code that falls out of the range of 2xx
       console.error('Error status:', error.response.status)
@@ -66,6 +70,11 @@ const Queries = () => {
   useEffect(() => {
     console.log(user)
   }, [user, date, filteredData])
+
+  
+  useEffect(() => {
+    console.log(data, "DATA")
+  }, [data])
 
   return (
     <Container>

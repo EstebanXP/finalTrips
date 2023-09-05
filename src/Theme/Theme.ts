@@ -82,7 +82,6 @@ export const theme = createTheme({
       styleOverrides: {
         paper: {
           padding: '20px', // Adjust the padding as needed,
-          height: "400px"
         },
       },
     },

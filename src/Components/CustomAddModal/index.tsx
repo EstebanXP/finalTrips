@@ -1,10 +1,21 @@
 import { Button, Dialog, TextField, Typography } from '@mui/material'
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
 import { DatePicker } from 'antd'
 import Autocomplete from '@mui/material/Autocomplete'
 import { ButtonsContainer, Container } from './styled'
 import dayjs, { Dayjs } from 'dayjs'
-import { rangePresets } from './utils'
-import { useState } from 'react'
+import {
+  columns,
+  fetchDataByParams,
+  rangePresets,
+  rows,
+  dataTypes,
+} from './utils'
+import { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
+import CancelProcessModal from '../CancelProcessModal'
+import { GlobalState } from '../../Redux/Store'
+import { useSelector } from 'react-redux'
 const { RangePicker } = DatePicker
 
 interface Props {
@@ -20,7 +31,14 @@ const options = [
 ]
 
 const CustomAddModal = ({ open, handleCloseModal }: Props) => {
+  const [openCancelProcessModal, setOpenCancelProcessModal] =
+    useState<boolean>(false)
+  const [nextStep, setNextStep] = useState<boolean>(false)
   const [date, setDate] = useState<string[]>([])
+  const { trips } = useSelector((state: GlobalState) => state.trips)
+  const [title, setTitle] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [description, setDescription] = useState<string>('')
 
   const onRangeChange = (
     dates: null | (Dayjs | null)[],
@@ -37,57 +55,192 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
     }
   }
 
+  async function fetchDataByParamsArray(
+    dataQueries: Array<{ start_time_utc: string; end_time_utc: string }>,
+    dataType: string // Pass dataType as a prop
+  ) {
+    const data = await Promise.all(
+      dataQueries.map(({ start_time_utc, end_time_utc }) =>
+        fetchDataByParams(
+          'd551fc2e-7a6c-4ebf-954b-29d3e6ae5bc4',
+          dataType,
+          start_time_utc,
+          end_time_utc
+        )
+      )
+    )
+    return data
+  }
+
+  const handleOpenCancelProcessModal = () => {
+    setOpenCancelProcessModal(true)
+  }
+
+  const handleCloseCancelProcessModal = () => {
+    setOpenCancelProcessModal(false)
+  }
+
   const disabledDate = (current: dayjs.Dayjs | null) => {
-    // If the date is after today, disable it
     return current ? current.isAfter(dayjs().endOf('day')) : false
   }
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value) // Update the Title state
+  }
+
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDescription(event.target.value) // Update the Description state
+  }
+
+  const handleNextStep = () => {
+    setNextStep(true)
+    fetchData()
+  }
+
+  const filteredData = trips?.filter((item) => {
+    const itemStartTime = new Date(item.start_time_utc).getTime()
+    const startDate = new Date(date[0]).getTime()
+    const endDate = new Date(date[1]).getTime()
+    return itemStartTime >= startDate && itemStartTime <= endDate
+  })
+
+  async function fetchData() {
+    try {
+      setLoading(true)
+      const promises = dataTypes.map(async (type) => {
+        const data = await fetchDataByParamsArray(filteredData || [], type)
+        return { dataType: type, data }
+      })
+      const results = await Promise.all(promises)
+      console.log(results)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    console.log(date)
+  }, [date])
+
+  useEffect(() => {
+    console.log(filteredData, 'FILTERED')
+  }, [filteredData])
 
   return (
     <div>
       <Dialog maxWidth="lg" onClose={handleCloseModal} open={open}>
-        <Container>
-          <Typography variant="h2">Create a new configuration</Typography>
-          <RangePicker
-            getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
-            presets={rangePresets}
-            onChange={onRangeChange}
-            disabledDate={disabledDate}
-          />
-          <TextField
-            fullWidth
-            id="standard-basic"
-            label="Title"
-            variant="standard"
-          />
-          <TextField
-            fullWidth
-            id="standard-basic"
-            label="Description"
-            variant="standard"
-          />
-          <Autocomplete
-            multiple
-            fullWidth
-            id="tags-standard"
-            options={options}
-            getOptionLabel={(option) => option.title}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="standard"
-                label="Add configurations"
-                placeholder="Add new one"
-              />
+        {!nextStep ? (
+          <Container>
+            <Typography variant="h2">Create a new configuration</Typography>
+            <RangePicker
+              getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
+              presets={rangePresets}
+              onChange={onRangeChange}
+              disabledDate={disabledDate}
+            />
+            <TextField
+              fullWidth
+              id="standard-basic"
+              label="Title"
+              variant="standard"
+              onChange={handleTitleChange}
+            />
+            <TextField
+              fullWidth
+              id="standard-basic"
+              label="Description"
+              variant="standard"
+              onChange={handleDescriptionChange}
+            />
+            <Autocomplete
+              multiple
+              fullWidth
+              id="tags-standard"
+              options={options}
+              getOptionLabel={(option) => option.title}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label="Add configurations"
+                  placeholder="Add new one"
+                />
+              )}
+            />
+            <ButtonsContainer>
+              <Button
+                fullWidth
+                variant="contained"
+                color="secondary"
+                onClick={handleOpenCancelProcessModal}
+              >
+                {' '}
+                Cancel
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={handleNextStep}
+              >
+                {' '}
+                Done
+              </Button>
+            </ButtonsContainer>
+          </Container>
+        ) : (
+          <Container>
+            {loading ? (
+              <div>loading</div>
+            ) : (
+              <div>
+                <Typography variant="h2">All data</Typography>
+                <DataGrid
+                  disableRowSelectionOnClick={true}
+                  rows={rows}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 5,
+                      },
+                    },
+                  }}
+                  pageSizeOptions={[5]}
+                  checkboxSelection={false}
+                />
+                <ButtonsContainer>
+                  <p>w</p>
+                  <p>w</p>
+                </ButtonsContainer>
+                <ButtonsContainer>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleOpenCancelProcessModal}
+                  >
+                    {' '}
+                    Cancel
+                  </Button>
+                  <Button fullWidth variant="contained" color="primary">
+                    {' '}
+                    Export and Save
+                  </Button>
+                </ButtonsContainer>
+              </div>
             )}
-          />
-          <ButtonsContainer>
-            <Button fullWidth variant='contained' color="secondary">
-              {' '}
-              Cancel
-            </Button>
-            <Button fullWidth variant='contained' color="primary"> Done</Button>
-          </ButtonsContainer>
-        </Container>
+          </Container>
+        )}
+        {/* <CancelProcessModal
+          open={openCancelProcessModal}
+          handleNoCancelProcess={handleCloseCancelProcessModal}
+          handleCancelProcess={handleCloseCancelProcessModal}
+            ></CancelProcessModal>*/}
       </Dialog>
     </div>
   )
