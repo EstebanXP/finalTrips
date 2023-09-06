@@ -67,14 +67,6 @@ const Queries = () => {
     getData()
   }, [])
 
-  useEffect(() => {
-    console.log(user)
-  }, [user, date, filteredData])
-
-  
-  useEffect(() => {
-    console.log(data, "DATA")
-  }, [data])
 
   return (
     <Container>

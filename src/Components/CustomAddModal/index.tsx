@@ -18,6 +18,19 @@ import { GlobalState } from '../../Redux/Store'
 import { useSelector } from 'react-redux'
 const { RangePicker } = DatePicker
 
+interface DataItem {
+  max_ts: number
+  ts: string
+  value: number
+  dataType?: string
+  id: number
+}
+
+interface DataTypeResult {
+  dataType: string
+  data: DataItem[]
+}
+
 interface Props {
   open: boolean
   handleCloseModal: () => void
@@ -39,6 +52,7 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
   const [title, setTitle] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [description, setDescription] = useState<string>('')
+  const [finalData, setfinalData] = useState<Array<DataItem>>([])
 
   const onRangeChange = (
     dates: null | (Dayjs | null)[],
@@ -72,6 +86,18 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
     return data
   }
 
+  const downloadJSONFile = () => {
+    const jsonString = JSON.stringify(finalData, null, 2) // The second argument (null) specifies the replacer function, and the third argument (2) specifies the indentation for the JSON file.
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'data.json' // Specify the desired file name
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
   const handleOpenCancelProcessModal = () => {
     setOpenCancelProcessModal(true)
   }
@@ -111,24 +137,32 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
       setLoading(true)
       const promises = dataTypes.map(async (type) => {
         const data = await fetchDataByParamsArray(filteredData || [], type)
-        return { dataType: type, data }
+        if (data.length > 0) {
+          data.forEach((item) => {
+            item.forEach((subItem: DataItem) => {
+              subItem.dataType = type
+            })
+          })
+          return data
+        }
+        return null
       })
-      const results = await Promise.all(promises)
-      console.log(results)
+
+      const results = (await Promise.all(promises)).filter(
+        (result) => result !== null
+      )
+      setLoading(false)
+      const filteredResponse = results.map((item) =>
+        item?.filter((entry) => entry.length > 0)
+      )
+
+      const flatData = filteredResponse.flat(Infinity)
+      console.log(flatData)
+      setfinalData(flatData)
     } catch (error) {
       console.error('Error fetching data:', error)
-    } finally {
-      setLoading(false)
     }
   }
-
-  useEffect(() => {
-    console.log(date)
-  }, [date])
-
-  useEffect(() => {
-    console.log(filteredData, 'FILTERED')
-  }, [filteredData])
 
   return (
     <div>
@@ -201,8 +235,9 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
                 <Typography variant="h2">All data</Typography>
                 <DataGrid
                   disableRowSelectionOnClick={true}
-                  rows={rows}
+                  rows={finalData}
                   columns={columns}
+                  getRowId={(row: any) => Math.random()}
                   initialState={{
                     pagination: {
                       paginationModel: {
@@ -227,7 +262,7 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
                     {' '}
                     Cancel
                   </Button>
-                  <Button fullWidth variant="contained" color="primary">
+                  <Button fullWidth variant="contained" color="primary" onClick={downloadJSONFile}>
                     {' '}
                     Export and Save
                   </Button>

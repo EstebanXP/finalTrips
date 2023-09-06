@@ -5,7 +5,6 @@ import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
 import { useQuery } from 'react-query'
 import axiosConfig from '../../api/axios'
 
-
 export const rangePresets: TimeRangePickerProps['presets'] = [
   {
     label: 'Today',
@@ -89,7 +88,7 @@ export const rows = [
 
 export const dataTypes = [
   'obd.fuel_level.value',
-  'track.pos.loc', //CHEAR DATA TYPE, geo_point
+  //'track.pos.loc', //CHEAR DATA TYPE, geo_point
   'rpi.temp.cpu.value',
   'obd.bat.voltage',
   'obd.ambiant_air_temp.value', //CHECAR DATATYPE long
@@ -112,7 +111,7 @@ export const fetchDataByParams = async (
   from_utc: string,
   to_utc: string
 ) => {
-  const baseUrl = 'https://api.autopi.io/logbook/storage/read/';
+  const baseUrl = 'https://api.autopi.io/logbook/storage/read/'
 
   // Field types mapping
   const fieldTypes: { [key: string]: string } = {
@@ -126,28 +125,25 @@ export const fetchDataByParams = async (
     'acc.xyz.x': 'float',
     'acc.xyz.y': 'float',
     'acc.xyz.z': 'float',
-  };
+  }
 
   // Determine field_type based on dataType
-  const field_type = fieldTypes[dataType] || 'float'; // Default to 'float' if not found
+  const field_type = fieldTypes[dataType] || 'float' // Default to 'float' if not found
 
-  const aggregation = 'avg'; // Suponemos que es siempre 'avg'
-  const interval = '3627ms'; // Suponemos que es siempre '3627ms'
+  const aggregation = 'avg' // Suponemos que es siempre 'avg'
+  const interval = '3627ms' // Suponemos que es siempre '3627ms'
 
-  const url = `${baseUrl}?device_id=${device_id}&field=${dataType}&field_type=${field_type}&aggregation=${aggregation}&from_utc=${from_utc}&to_utc=${to_utc}&interval=${interval}`;
+  const url = `${baseUrl}?device_id=${device_id}&field=${dataType}&field_type=${field_type}&aggregation=${aggregation}&from_utc=${from_utc}&to_utc=${to_utc}&interval=${interval}`
 
   try {
-    const response = await axiosConfig.get(url);
+    const response = await axiosConfig.get(url)
 
     if (response.status !== 200) {
-      throw new Error('Failed to fetch data');
+      throw new Error('Failed to fetch data')
     }
 
-    return response.data;
+    return response.data
   } catch (error) {
-    throw new Error('Failed to fetch data');
+    throw new Error('Failed to fetch data')
   }
-};
-
-
-
+}

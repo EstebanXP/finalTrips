@@ -30,10 +30,6 @@ const SideBar = () => {
     navigate('/')
   }
 
-  useEffect(() => {
-    console.log(user, 'ASFFAS')
-  }, [user])
-
   return (
     <Container>
       <Drawer
