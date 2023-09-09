@@ -1,10 +1,5 @@
 import { useState } from 'react'
-import {
-  Button,
-  IconButton,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Button, IconButton, TextField, Typography } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { UserCredentails } from '../../Utils/Types'
@@ -28,7 +23,7 @@ const Login = () => {
     password: '',
   })
   const navigate = useNavigate()
-  const { setUserData, logout } = actions
+  const { setUserData } = actions
   const dispatch = useDispatch()
 
   const handlePasswordButton = () => {
@@ -63,10 +58,6 @@ const Login = () => {
         console.error('Error:', error.message)
       }
     }
-  }
-
-  const handleLogout = () => {
-    dispatch(logout())
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +115,12 @@ const Login = () => {
               ),
             }}
           />
-          <Button variant="contained" color="primary" type="submit" style={{ width: '100%' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            style={{ width: '100%' }}
+          >
             Login
           </Button>
         </StyledForm>
@@ -158,7 +154,6 @@ const Login = () => {
           </Typography>
         </SignUpTextContainer>
       </StyledFormContainer>
-      <button onClick={handleLogout}>qweqweqw</button>
     </StyledLoginContainer>
   )
 }

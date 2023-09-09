@@ -6,16 +6,20 @@ interface Props {
   handleCancelProcess: () => void
   handleNoCancelProcess: () => void
 }
-const CancelProcessModal = ({ open, handleCancelProcess }: Props) => {
+const CancelProcessModal = ({
+  open,
+  handleCancelProcess,
+  handleNoCancelProcess,
+}: Props) => {
   return (
     <Dialog maxWidth="lg" open={open} onClose={handleCancelProcess}>
       <Typography variant="h6">Are you sure?</Typography>
       <Typography variant="body1">This action cannot be reversed</Typography>
-      <div style={{ display: "flex" , justifyContent: "space-between"}}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button
           variant="contained"
           color="primary"
-          onClick={handleCancelProcess}
+          onClick={handleNoCancelProcess}
         >
           No
         </Button>

@@ -9,20 +9,31 @@ import {
   CardActions,
 } from '@mui/material'
 import CardHeader from '@mui/material/CardHeader'
+import { Timestamp } from 'firebase/firestore'
 import { Chip } from '@mui/material'
 import CustomEditModal from '../CustomEditModal'
 import { useState } from 'react'
+import { ChipItem } from '../../Utils/Types'
 
 interface Props {
   title: string
-  date: string
+  createdAt: Timestamp
+  dates: string[]
   description: string
   children?: React.ReactNode
-  tags: any[]
+  tags: ChipItem[]
 }
 
-const DeletableCard = ({ title, date, description, tags, children }: Props) => {
+const DeletableCard = ({
+  title,
+  createdAt,
+  dates,
+  description,
+  tags,
+  children,
+}: Props) => {
   const [openModal, setOpenModal] = useState<boolean>(false)
+  //const [date, setDate] = useState<string[]>(dates)
 
   const handleOpenModal = () => {
     setOpenModal(true)
@@ -39,13 +50,14 @@ const DeletableCard = ({ title, date, description, tags, children }: Props) => {
           subheaderTypographyProps={{ variant: 'body2' }}
           sx={{ padding: '8px 16px 0px 16px' }}
           title={title}
-          subheader={date}
+          subheader={createdAt.toDate().toLocaleDateString()}
           action={
             <IconButton>
               <CloseIcon></CloseIcon>
             </IconButton>
           }
         ></CardHeader>
+        
         <CardActionArea onClick={handleOpenModal}>
           <CardContent>
             <Typography variant="body2">{description}</Typography>
@@ -57,7 +69,7 @@ const DeletableCard = ({ title, date, description, tags, children }: Props) => {
             }}
           >
             {tags.slice(0, 2).map((tag) => {
-              return <Chip key={tag.id} label={tag.name}></Chip>
+              return <Chip key={tag.id} label={tag.title}></Chip>
             })}
             {/*remainingItemCount > 0 && <span> +{remainingItemCount} </span>*/}
             {tags.length - 2 > 0 && (
@@ -68,6 +80,9 @@ const DeletableCard = ({ title, date, description, tags, children }: Props) => {
         <CustomEditModal
           title={title}
           open={openModal}
+          dates={dates}
+          tags={tags}
+          description={description}
           handleCloseModal={handleClosenModal}
         ></CustomEditModal>
       </Card>

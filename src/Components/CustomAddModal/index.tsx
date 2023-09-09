@@ -1,21 +1,27 @@
-import { Button, Dialog, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  FormControlLabel,
+  FormGroup,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
 import { DatePicker } from 'antd'
 import Autocomplete from '@mui/material/Autocomplete'
 import { ButtonsContainer, Container } from './styled'
 import dayjs, { Dayjs } from 'dayjs'
-import {
-  columns,
-  fetchDataByParams,
-  rangePresets,
-  rows,
-  dataTypes,
-} from './utils'
+import { columns, fetchDataByParams, rangePresets } from './utils'
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import CancelProcessModal from '../CancelProcessModal'
 import { GlobalState } from '../../Redux/Store'
 import { useSelector } from 'react-redux'
+import { ChipItem } from '../../Utils/Types'
+import { addDoc, collection } from 'firebase/firestore'
+import { db } from '../../config/config'
+import { options } from '../CustomEditModal/utils'
 const { RangePicker } = DatePicker
 
 interface DataItem {
@@ -26,26 +32,17 @@ interface DataItem {
   id: number
 }
 
-interface DataTypeResult {
-  dataType: string
-  data: DataItem[]
-}
-
 interface Props {
   open: boolean
   handleCloseModal: () => void
 }
 
-const options = [
-  { id: 1, title: 'RPi' },
-  { id: 2, title: 'Coolant temperature' },
-  { id: 3, title: 'Speed' },
-  { id: 4, title: 'RPM' },
-]
-
 const CustomAddModal = ({ open, handleCloseModal }: Props) => {
   const [openCancelProcessModal, setOpenCancelProcessModal] =
     useState<boolean>(false)
+  const [dataTypesArray, setDataTypesArray] = useState<Array<ChipItem>>([])
+  const [csvChecked, setCsvChecked] = useState(true)
+  const [jsonChecked, setJsonChecked] = useState(true)
   const [nextStep, setNextStep] = useState<boolean>(false)
   const [date, setDate] = useState<string[]>([])
   const { trips } = useSelector((state: GlobalState) => state.trips)
@@ -53,6 +50,42 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [description, setDescription] = useState<string>('')
   const [finalData, setfinalData] = useState<Array<DataItem>>([])
+
+  const addDocument = () => {
+    if (csvChecked) {
+      downloadCSV()
+    }
+    if (jsonChecked) {
+      downloadJSONFile()
+    }
+    try {
+      addDoc(collection(db, 'usuarios', 'ray3', 'configurations'), {
+        title: title,
+        description: description,
+        dates: date,
+        createdAt: new Date(),
+        configurations: dataTypesArray,
+      }).then((resp) => {
+        console.log('Document written with ID: ', resp.id)
+        setNextStep(false)
+        setDate([])
+        setTitle('')
+        handleCloseModal()
+        setDataTypesArray([])
+      })
+    } catch (e) {
+      console.error('Error adding document: ', e)
+    }
+  }
+
+  const handleClickCancelProcess = () => {
+    setOpenCancelProcessModal(false)
+    setNextStep(false)
+    setDate([])
+    setTitle('')
+    setDataTypesArray([])
+    handleCloseModal()
+  }
 
   const onRangeChange = (
     dates: null | (Dayjs | null)[],
@@ -98,6 +131,39 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }
+
+  const downloadCSV = () => {
+    const csvHeader = Object.keys(finalData[0]).join(',') + '\n'
+    const csvBody = finalData
+      .map((item) => Object.values(item).join(','))
+      .join('\n')
+
+    const csvContent = csvHeader + csvBody
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'data.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  // Define onChange handlers for the checkboxes
+  const handleCsvChange = () => {
+    setCsvChecked((prevChecked) => !prevChecked)
+  }
+
+  const handleJsonChange = () => {
+    setJsonChecked((prevChecked) => !prevChecked)
+  }
+
+  const handleAutocompleteChange = (
+    event: React.SyntheticEvent,
+    newValue: ChipItem[]
+  ) => {
+    setDataTypesArray(newValue)
+  }
   const handleOpenCancelProcessModal = () => {
     setOpenCancelProcessModal(true)
   }
@@ -135,12 +201,12 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
   async function fetchData() {
     try {
       setLoading(true)
-      const promises = dataTypes.map(async (type) => {
-        const data = await fetchDataByParamsArray(filteredData || [], type)
+      const promises = dataTypesArray.map(async ({ dataType }) => {
+        const data = await fetchDataByParamsArray(filteredData || [], dataType)
         if (data.length > 0) {
           data.forEach((item) => {
             item.forEach((subItem: DataItem) => {
-              subItem.dataType = type
+              subItem.dataType = dataType
             })
           })
           return data
@@ -148,27 +214,36 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
         return null
       })
 
-      const results = (await Promise.all(promises)).filter(
-        (result) => result !== null
+      const results = await Promise.all(
+        promises.map(async (promise) => {
+          const result = await promise
+
+          return result
+        })
       )
+
       setLoading(false)
+
       const filteredResponse = results.map((item) =>
         item?.filter((entry) => entry.length > 0)
       )
 
       const flatData = filteredResponse.flat(Infinity)
-      console.log(flatData)
       setfinalData(flatData)
     } catch (error) {
       console.error('Error fetching data:', error)
+    } finally {
+      setLoading(false)
     }
   }
+
+  useEffect(() => {}, [finalData])
 
   return (
     <div>
       <Dialog maxWidth="lg" onClose={handleCloseModal} open={open}>
         {!nextStep ? (
-          <Container>
+          <Container customHeight="400px">
             <Typography variant="h2">Create a new configuration</Typography>
             <RangePicker
               getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
@@ -196,6 +271,8 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
               id="tags-standard"
               options={options}
               getOptionLabel={(option) => option.title}
+              onChange={handleAutocompleteChange}
+              value={dataTypesArray}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -228,54 +305,74 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
           </Container>
         ) : (
           <Container>
-            {loading ? (
-              <div>loading</div>
-            ) : (
-              <div>
-                <Typography variant="h2">All data</Typography>
-                <DataGrid
-                  disableRowSelectionOnClick={true}
-                  rows={finalData}
-                  columns={columns}
-                  getRowId={(row: any) => Math.random()}
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 5,
-                      },
+            <Container customHeight="500px">
+              <Typography variant="h2">All data</Typography>
+              <DataGrid
+                disableRowSelectionOnClick={true}
+                rows={finalData}
+                loading={loading}
+                columns={columns}
+                getRowId={(row: any) => Math.random()}
+                initialState={{
+                  pagination: {
+                    paginationModel: {
+                      pageSize: 5,
                     },
-                  }}
-                  pageSizeOptions={[5]}
-                  checkboxSelection={false}
-                />
-                <ButtonsContainer>
-                  <p>w</p>
-                  <p>w</p>
-                </ButtonsContainer>
-                <ButtonsContainer>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleOpenCancelProcessModal}
-                  >
-                    {' '}
-                    Cancel
-                  </Button>
-                  <Button fullWidth variant="contained" color="primary" onClick={downloadJSONFile}>
-                    {' '}
-                    Export and Save
-                  </Button>
-                </ButtonsContainer>
-              </div>
-            )}
+                  },
+                }}
+                pageSizeOptions={[5, 50, 100]}
+                checkboxSelection={false}
+              />
+              <ButtonsContainer>
+                <FormGroup style={{ display: 'flex', flexDirection: 'row' }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={csvChecked}
+                        onChange={handleCsvChange}
+                      />
+                    }
+                    label="CSV"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={jsonChecked}
+                        onChange={handleJsonChange}
+                      />
+                    }
+                    label="JSON"
+                  />
+                </FormGroup>
+              </ButtonsContainer>
+              <ButtonsContainer>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleOpenCancelProcessModal}
+                >
+                  {' '}
+                  Cancel
+                </Button>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={addDocument}
+                >
+                  {' '}
+                  Export and Save
+                </Button>
+              </ButtonsContainer>
+            </Container>
           </Container>
         )}
-        {/* <CancelProcessModal
+        <CancelProcessModal
           open={openCancelProcessModal}
           handleNoCancelProcess={handleCloseCancelProcessModal}
-          handleCancelProcess={handleCloseCancelProcessModal}
-            ></CancelProcessModal>*/}
+          handleCancelProcess={handleClickCancelProcess}
+        ></CancelProcessModal>
       </Dialog>
     </div>
   )

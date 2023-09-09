@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore'
+
 export interface UserCredentails {
   email: string
   password: string
@@ -168,6 +170,12 @@ export interface ApiResponse {
   page_size: number
 }
 
+export interface ChipItem {
+  id: number
+  title: string
+  dataType: string
+}
+
 //ENUMS
 
 export enum VehicleType {
@@ -188,4 +196,13 @@ export enum AccessLevel {
   ReadOnly = 'READONLY',
   ReadWrite = 'READWRITE',
   // Add other levels as needed
+}
+
+export interface TripCard {
+  id: string
+  title: string
+  description: string
+  dates: string[]
+  createdAt: Timestamp
+  configurations: ChipItem[]
 }

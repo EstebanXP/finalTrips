@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles'
+import type {} from '@mui/x-data-grid-pro/themeAugmentation'
 
 export const theme = createTheme({
   typography: {
@@ -58,7 +59,7 @@ export const theme = createTheme({
       styleOverrides: {
         containedPrimary: {
           backgroundColor: '#1a202cf2', // Customize the primary contained button background color
-          borderRadius: "8px",
+          borderRadius: '8px',
           '&:hover': {
             backgroundColor: '#4C5566', // Customize the hover state
           },
@@ -100,6 +101,15 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          '& .MuiDataGrid-cell:focus-within': {
+            outline: 'none !important',
+          },
+        },
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -119,7 +129,7 @@ export const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          color: 'black', 
+          color: 'black',
         },
       },
     },

@@ -1,27 +1,37 @@
+import React, { useEffect } from 'react'
 import { Button, Dialog, TextField, Typography } from '@mui/material'
 import { DatePicker } from 'antd'
 import Autocomplete from '@mui/material/Autocomplete'
 import { ButtonsContainer, Container } from './styled'
 import dayjs, { Dayjs } from 'dayjs'
-import { rangePresets } from './utils'
+import { options, rangePresets } from './utils'
 import { useState } from 'react'
+import { ChipItem } from '../../Utils/Types'
 const { RangePicker } = DatePicker
 
 interface Props {
   open: boolean
+  description: string
   handleCloseModal: () => void
+  dates: string[]
   title: string
+  tags: ChipItem[]
 }
 
-const options = [
-  { id: 1, title: 'RPi' },
-  { id: 2, title: 'Coolant temperature' },
-  { id: 3, title: 'Speed' },
-  { id: 4, title: 'RPM' },
-]
-
-const CustomEditModal = ({ open, handleCloseModal, title }: Props) => {
+const CustomEditModal = ({
+  open,
+  handleCloseModal,
+  title,
+  dates,
+  description,
+  tags,
+}: Props) => {
   const [date, setDate] = useState<string[]>([])
+  const [dataTypesArray, setDataTypesArray] = useState<Array<ChipItem>>([])
+
+  const [startDate, endDate] = dates.map((dateString) => dayjs(dateString))
+
+  // Check if you have both start and end dates
 
   const onRangeChange = (
     dates: null | (Dayjs | null)[],
@@ -38,10 +48,24 @@ const CustomEditModal = ({ open, handleCloseModal, title }: Props) => {
     }
   }
 
+  const handleAutocompleteChange = (
+    event: React.SyntheticEvent,
+    newValue: ChipItem[]
+  ) => {
+    setDataTypesArray(newValue)
+    // You can perform additional actions with the selected options here
+  }
+
   const disabledDate = (current: dayjs.Dayjs | null) => {
-    // If the date is after today, disable it
     return current ? current.isAfter(dayjs().endOf('day')) : false
   }
+
+  const getOptionSelected = (option: ChipItem, value: ChipItem) =>
+    option.id === value.id
+
+  useEffect(() => {
+    console.log(date)
+  }, [date])
 
   return (
     <div>
@@ -52,6 +76,7 @@ const CustomEditModal = ({ open, handleCloseModal, title }: Props) => {
             getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
             presets={rangePresets}
             onChange={onRangeChange}
+            defaultValue={[startDate, endDate]}
             disabledDate={disabledDate}
           />
           <TextField
@@ -66,12 +91,16 @@ const CustomEditModal = ({ open, handleCloseModal, title }: Props) => {
             id="standard-basic"
             label="Description"
             variant="standard"
+            defaultValue={description}
           />
           <Autocomplete
             multiple
             fullWidth
             id="tags-standard"
+            defaultValue={tags}
+            isOptionEqualToValue={(option: ChipItem, value:ChipItem) => option.id === value.id}
             options={options}
+            onChange={handleAutocompleteChange}
             getOptionLabel={(option) => option.title}
             renderInput={(params) => (
               <TextField
