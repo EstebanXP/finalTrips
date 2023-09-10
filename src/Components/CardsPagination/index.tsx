@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Pagination, Grid, PaginationItem } from '@mui/material'
 import DeletableCard from '../DeletableCard'
-import { addDoc, collection, getDocs } from 'firebase/firestore'
-import { dummyItems } from './utils'
+import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../config/config'
 import { TripCard } from '../../Utils/Types'
-
-interface Item {
-  id: number
-  name: string
-  date: string
-  description: string
-  tags: any[]
-}
 
 const itemsPerPage = 8
 const itemsPerRow = 4
@@ -47,23 +38,6 @@ const CardsPagination = () => {
     }
   }
 
-  const handleClick = () => {
-    try {
-      addDoc(collection(db, 'usuarios', 'ray3', 'configurations'), {
-        title: 'Test88888',
-        description: 'Description02',
-        dates: ['2023-01-01T06:00:00.000Z', '2023-09-07T06:00:00.000Z'],
-        createdAt: new Date(),
-        configurations: [{ id: 1, title: 'Speed', obdValue: 'obd.speed' }],
-      }).then((resp) => {
-        console.log(resp)
-        console.log('Document written with ID: ', resp.id)
-      })
-    } catch (e) {
-      console.error('Error adding document: ', e)
-    }
-  }
-
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
   const displayedItems = trips.slice(startIndex, endIndex)
@@ -77,10 +51,6 @@ const CardsPagination = () => {
   useEffect(() => {
     getData()
   }, [])
-
-  useEffect(() => {
-    console.log(trips, 'SSSS')
-  }, [trips])
 
   return (
     <div
@@ -96,6 +66,8 @@ const CardsPagination = () => {
                 description={item.description}
                 tags={item.configurations}
                 dates={item.dates}
+                id={item.id}
+                refreshData={getData}
               />
             </Grid>
           ))}

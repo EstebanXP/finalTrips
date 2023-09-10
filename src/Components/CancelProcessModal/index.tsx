@@ -11,8 +11,15 @@ const CancelProcessModal = ({
   handleCancelProcess,
   handleNoCancelProcess,
 }: Props) => {
+  const handleClose = (
+    event: React.MouseEvent<HTMLDivElement>,
+    reason: string | undefined
+  ) => {
+    if (reason && reason === 'backdropClick') return
+    handleCancelProcess()
+  }
   return (
-    <Dialog maxWidth="lg" open={open} onClose={handleCancelProcess}>
+    <Dialog maxWidth="lg" open={open} onClose={handleClose}>
       <Typography variant="h6">Are you sure?</Typography>
       <Typography variant="body1">This action cannot be reversed</Typography>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>

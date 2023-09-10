@@ -1,8 +1,7 @@
 import dayjs from 'dayjs'
 import type { TimeRangePickerProps } from 'antd'
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
+import { GridColDef } from '@mui/x-data-grid'
 
-import { useQuery } from 'react-query'
 import axiosConfig from '../../api/axios'
 
 export const rangePresets: TimeRangePickerProps['presets'] = [

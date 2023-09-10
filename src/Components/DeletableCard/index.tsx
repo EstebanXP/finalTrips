@@ -13,7 +13,10 @@ import { Timestamp } from 'firebase/firestore'
 import { Chip } from '@mui/material'
 import CustomEditModal from '../CustomEditModal'
 import { useState } from 'react'
+import { doc, deleteDoc } from 'firebase/firestore'
 import { ChipItem } from '../../Utils/Types'
+import { db } from '../../config/config'
+import CancelProcessModal from '../CancelProcessModal'
 
 interface Props {
   title: string
@@ -22,6 +25,8 @@ interface Props {
   description: string
   children?: React.ReactNode
   tags: ChipItem[]
+  id: string
+  refreshData: () => void
 }
 
 const DeletableCard = ({
@@ -30,16 +35,38 @@ const DeletableCard = ({
   dates,
   description,
   tags,
+  id,
+  refreshData,
   children,
 }: Props) => {
   const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false)
+
+  const deleteCard = () => {
+    doc(db, 'usuarios', 'ray3', 'configurations', id)
+    deleteDoc(doc(db, 'usuarios', 'ray3', 'configurations', id)).then(
+      (resp) => {
+        console.log(resp)
+        setOpenDeleteModal(false)
+        refreshData()
+      }
+    )
+  }
   //const [date, setDate] = useState<string[]>(dates)
+
+  const handleOpenDeleteModal = () => {
+    setOpenDeleteModal(true)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false)
+  }
 
   const handleOpenModal = () => {
     setOpenModal(true)
   }
 
-  const handleClosenModal = () => {
+  const handleCloseModal = () => {
     setOpenModal(false)
   }
   return (
@@ -52,12 +79,12 @@ const DeletableCard = ({
           title={title}
           subheader={createdAt.toDate().toLocaleDateString()}
           action={
-            <IconButton>
+            <IconButton onClick={handleOpenDeleteModal}>
               <CloseIcon></CloseIcon>
             </IconButton>
           }
         ></CardHeader>
-        
+
         <CardActionArea onClick={handleOpenModal}>
           <CardContent>
             <Typography variant="body2">{description}</Typography>
@@ -83,9 +110,16 @@ const DeletableCard = ({
           dates={dates}
           tags={tags}
           description={description}
-          handleCloseModal={handleClosenModal}
+          handleCloseModal={handleCloseModal}
+          id={id}
+          refreshData={refreshData}
         ></CustomEditModal>
       </Card>
+      <CancelProcessModal
+        open={openDeleteModal}
+        handleCancelProcess={deleteCard}
+        handleNoCancelProcess={handleCloseDeleteModal}
+      ></CancelProcessModal>
     </div>
   )
 }

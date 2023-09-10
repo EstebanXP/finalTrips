@@ -2,13 +2,12 @@ import {
   Button,
   Checkbox,
   Dialog,
-  DialogContent,
   FormControlLabel,
   FormGroup,
   TextField,
   Typography,
 } from '@mui/material'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid'
 import { DatePicker } from 'antd'
 import Autocomplete from '@mui/material/Autocomplete'
 import { ButtonsContainer, Container } from './styled'
@@ -24,7 +23,7 @@ import { db } from '../../config/config'
 import { options } from '../CustomEditModal/utils'
 const { RangePicker } = DatePicker
 
-interface DataItem {
+export interface DataItem {
   max_ts: number
   ts: string
   value: number
@@ -149,7 +148,6 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
     document.body.removeChild(link)
   }
 
-  // Define onChange handlers for the checkboxes
   const handleCsvChange = () => {
     setCsvChecked((prevChecked) => !prevChecked)
   }
@@ -237,11 +235,17 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
     }
   }
 
-  useEffect(() => {}, [finalData])
+  const handleClose = (
+    event: React.MouseEvent<HTMLDivElement>,
+    reason: string | undefined
+  ) => {
+    if (reason && reason === 'backdropClick') return
+    handleCloseModal()
+  }
 
   return (
     <div>
-      <Dialog maxWidth="lg" onClose={handleCloseModal} open={open}>
+      <Dialog maxWidth="lg" onClose={handleClose} open={open}>
         {!nextStep ? (
           <Container customHeight="400px">
             <Typography variant="h2">Create a new configuration</Typography>
