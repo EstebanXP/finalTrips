@@ -23,6 +23,7 @@ import CancelProcessModal from '../CancelProcessModal'
 import { DataItem } from '../CustomAddModal'
 import { GlobalState } from '../../Redux/Store'
 import { useSelector } from 'react-redux'
+import CustomChip from '../CustomChip'
 const { RangePicker } = DatePicker
 
 interface Props {
@@ -284,6 +285,8 @@ const CustomEditModal = ({
               onChange={onRangeChange}
               defaultValue={[startDate, endDate]}
               disabledDate={disabledDate}
+              showTime={{ format: 'HH:mm' }} // Specify the time format
+              format="YYYY-MM-DD HH:mm" 
             />
 
             <TextField
@@ -314,6 +317,11 @@ const CustomEditModal = ({
               value={dataTypesArray}
               onChange={handleAutocompleteChange}
               getOptionLabel={(option) => option.title}
+              renderTags={(tagValue, getTagProps) => {
+                return tagValue.map((option, index) => (
+                  <CustomChip {...getTagProps({ index })} value={option.title} obd={option.dataType} />
+                ));
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}

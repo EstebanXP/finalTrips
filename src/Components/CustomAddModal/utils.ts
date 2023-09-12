@@ -91,7 +91,6 @@ export const dataTypes = [
   'rpi.temp.cpu.value',
   'obd.bat.voltage',
   'obd.ambiant_air_temp.value', //CHECAR DATATYPE long
-  'obd.coolant_temp.value', //CHECAR DATATYPE long
   'obd.speed.value',
   'obd.rpm.value',
   'acc.xyz.x',
@@ -114,16 +113,15 @@ export const fetchDataByParams = async (
 
   // Field types mapping
   const fieldTypes: { [key: string]: string } = {
-    'track.pos.loc': 'geo_point',
-    'obd.ambiant_air_temp.value': 'long',
-    'obd.coolant_temp.value': 'long',
-    'rpi.temp.cpu.value': 'float',
-    'obd.bat.voltage': 'float',
-    'obd.speed.value': 'float',
+    'obd.fuel_level.value': 'float',
+    'obd.ambiant_air_temp.value': 'long', //YA
+    'obd.coolant_temp.value': 'long', //YA
+    'obd.bat.voltage': 'float', //YA
+    'obd.speed.value': 'float', //YA
     'obd.rpm.value': 'float',
-    'acc.xyz.x': 'float',
-    'acc.xyz.y': 'float',
-    'acc.xyz.z': 'float',
+    'acc.xyz.x': 'float', //YA
+    'acc.xyz.y': 'float', //YA
+    'acc.xyz.z': 'float', //YA
   }
 
   // Determine field_type based on dataType

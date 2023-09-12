@@ -14,7 +14,8 @@ export const Container = styled.form<ContainerProps>`
 
 export const ButtonsContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  //flex-direction: row;
   gap: 5px;
   margin-top: auto;
   width: 1000px;

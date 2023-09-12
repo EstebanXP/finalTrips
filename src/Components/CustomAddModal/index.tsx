@@ -13,7 +13,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { ButtonsContainer, Container } from './styled'
 import dayjs, { Dayjs } from 'dayjs'
 import { columns, fetchDataByParams, rangePresets } from './utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CancelProcessModal from '../CancelProcessModal'
 import { GlobalState } from '../../Redux/Store'
 import { useSelector } from 'react-redux'
@@ -21,6 +21,7 @@ import { ChipItem } from '../../Utils/Types'
 import { addDoc, collection } from 'firebase/firestore'
 import { db } from '../../config/config'
 import { options } from '../CustomEditModal/utils'
+import CustomChip from '../CustomChip'
 const { RangePicker } = DatePicker
 
 export interface DataItem {
@@ -34,9 +35,10 @@ export interface DataItem {
 interface Props {
   open: boolean
   handleCloseModal: () => void
+  getTrips: () => void
 }
 
-const CustomAddModal = ({ open, handleCloseModal }: Props) => {
+const CustomAddModal = ({ open, handleCloseModal, getTrips }: Props) => {
   const [openCancelProcessModal, setOpenCancelProcessModal] =
     useState<boolean>(false)
   const [dataTypesArray, setDataTypesArray] = useState<Array<ChipItem>>([])
@@ -71,6 +73,7 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
         setTitle('')
         handleCloseModal()
         setDataTypesArray([])
+        getTrips()
       })
     } catch (e) {
       console.error('Error adding document: ', e)
@@ -94,7 +97,6 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
       const dayjsDates: Dayjs[] = dateStrings.map((dateString) =>
         dayjs(dateString)
       )
-
       setDate(dayjsDates.map((d) => d.toISOString()))
     } else {
       console.log('Clear')
@@ -243,17 +245,23 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
     handleCloseModal()
   }
 
+  useEffect(() => {
+    console.log(date)
+  }, [date])
+
   return (
     <div>
       <Dialog maxWidth="lg" onClose={handleClose} open={open}>
         {!nextStep ? (
-          <Container customHeight="400px">
+          <Container customHeight="500px">
             <Typography variant="h2">Create a new configuration</Typography>
             <RangePicker
               getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
               presets={rangePresets}
               onChange={onRangeChange}
               disabledDate={disabledDate}
+              showTime={{ format: 'HH:mm' }} // Specify the time format
+              format="YYYY-MM-DD HH:mm"
             />
             <TextField
               fullWidth
@@ -277,6 +285,16 @@ const CustomAddModal = ({ open, handleCloseModal }: Props) => {
               getOptionLabel={(option) => option.title}
               onChange={handleAutocompleteChange}
               value={dataTypesArray}
+              renderTags={(tagValue, getTagProps) => {
+                console.log(tagValue)
+                return tagValue.map((option, index) => (
+                  <CustomChip
+                    {...getTagProps({ index })}
+                    value={option.title}
+                    obd={option.dataType}
+                  />
+                ))
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
