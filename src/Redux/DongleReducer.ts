@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { DongleData } from '../Utils/Types'
 
-interface dongleState {
+export interface dongleState {
   access: string
   callName: string
   data_usage: number
