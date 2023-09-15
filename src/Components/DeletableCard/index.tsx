@@ -1,6 +1,7 @@
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import React from 'react'
+import 'dayjs/locale/en'
+import dayjs from 'dayjs'
 import CloseIcon from '@mui/icons-material/Close'
 import {
   Typography,
@@ -12,11 +13,12 @@ import CardHeader from '@mui/material/CardHeader'
 import { Timestamp } from 'firebase/firestore'
 import { Chip } from '@mui/material'
 import CustomEditModal from '../CustomEditModal'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { doc, deleteDoc } from 'firebase/firestore'
 import { ChipItem } from '../../Utils/Types'
 import { db } from '../../config/config'
 import CancelProcessModal from '../CancelProcessModal'
+import CustomChip from '../CustomChip'
 
 interface Props {
   title: string
@@ -69,6 +71,22 @@ const DeletableCard = ({
   const handleCloseModal = () => {
     setOpenModal(false)
   }
+
+  const formatDate = (inputDate: string): string => {
+    return dayjs(inputDate).locale('en').format('DD MMM YYYY hh:mm A')
+  }
+
+  const formatDateFromTimestamp = (
+    timestamp: Timestamp | undefined
+  ): string => {
+    if (!timestamp) {
+      return '' // Handle the case where the timestamp is undefined
+    }
+
+    const date = dayjs(timestamp.toDate()).locale('en')
+    return date.format('D MMM YYYY')
+  }
+
   return (
     <div>
       <Card sx={{ maxWidth: 400, marginBottom: '4rem' }}>
@@ -77,7 +95,7 @@ const DeletableCard = ({
           subheaderTypographyProps={{ variant: 'body2' }}
           sx={{ padding: '8px 16px 0px 16px' }}
           title={title}
-          subheader={createdAt.toDate().toLocaleDateString()}
+          subheader={formatDateFromTimestamp(createdAt)}
           action={
             <IconButton onClick={handleOpenDeleteModal}>
               <CloseIcon></CloseIcon>
@@ -87,6 +105,11 @@ const DeletableCard = ({
 
         <CardActionArea onClick={handleOpenModal}>
           <CardContent>
+            <Typography color="black" variant="body2">
+              <strong>{`${formatDate(dates[0])} - ${formatDate(
+                dates[1]
+              )} `}</strong>
+            </Typography>
             <Typography variant="body2">{description}</Typography>
           </CardContent>
 
@@ -96,7 +119,7 @@ const DeletableCard = ({
             }}
           >
             {tags.slice(0, 2).map((tag) => {
-              return <Chip key={tag.id} label={tag.title}></Chip>
+              return <CustomChip value={tag.title} obd={tag.dataType} /> //<Chip key={tag.id} label={tag.title}></Chip>
             })}
             {/*remainingItemCount > 0 && <span> +{remainingItemCount} </span>*/}
             {tags.length - 2 > 0 && (

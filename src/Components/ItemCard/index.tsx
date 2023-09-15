@@ -33,7 +33,7 @@ const ItemCard = ({ dongle }: Props) => {
     <Card>
       <CardContent>
         <Typography variant="body1">{callName}</Typography>
-        <Typography variant="body2">{id}</Typography>
+        <Typography variant="body2">{`ID: ${id}`}</Typography>
         <Typography variant="body2">{`Last comunication: ${formatDateString(
           last_communication
         )}`}</Typography>

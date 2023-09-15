@@ -277,7 +277,7 @@ const CustomEditModal = ({
         open={open}
       >
         {!nextStep ? (
-          <Container>
+          <Container customHeight="500px">
             <Typography variant="h2">Edit Configuration</Typography>
             <RangePicker
               getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}

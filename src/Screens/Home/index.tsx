@@ -35,6 +35,7 @@ const Home = () => {
 
   useEffect(() => {
     getData()
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const Home = () => {
           <Typography variant="h2">{`Welcome back ${user?.first_name}`}</Typography>
         </HeaderContainer>
         <CustomCard title="Dongles Related to this account">
-          <Typography variant="body1">{`There is ${dongles.length} dongles related to this account`}</Typography>
+          <Typography variant="body1">{`There is ${dongles.length} dongle(s) related to this account`}</Typography>
         </CustomCard>
       </LeftContainer>
       <RightContainer>
