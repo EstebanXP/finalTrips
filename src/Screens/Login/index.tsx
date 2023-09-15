@@ -3,12 +3,18 @@ import { Button, IconButton, TextField, Typography } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { UserCredentails } from '../../Utils/Types'
-import axios from '../../api/axios'
 import { actions } from '../../Redux/UserReducer'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { StyledLoginContainer } from '../../Styled'
-import { StyledForm, StyledFormContainer, StyledTitleContainer } from './styled'
+import {
+  SignUpTextContainer,
+  StyledForm,
+  StyledFormContainer,
+  StyledTitleContainer,
+  TitleContainer,
+} from './styled'
+import axiosConfig from '../../api/axios'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -17,7 +23,7 @@ const Login = () => {
     password: '',
   })
   const navigate = useNavigate()
-  const { setUserData, logout } = actions
+  const { setUserData } = actions
   const dispatch = useDispatch()
 
   const handlePasswordButton = () => {
@@ -26,10 +32,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`/auth/login/`, {
+      const response = await axiosConfig.post(`/auth/login/`, {
         email: userCredentials.email,
         password: userCredentials.password,
       })
+      console.log(response, 'assdssasda')
       dispatch(
         setUserData({
           token: response.data.token,
@@ -53,10 +60,6 @@ const Login = () => {
     }
   }
 
-  const handleLogout = () => {
-    dispatch(logout())
-  }
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setUserCredentials((prevCredentials) => ({
@@ -70,13 +73,6 @@ const Login = () => {
     await handleLogin()
   }
 
-  /*useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/Home')
-    }
-    // eslint-disable-next-line
-  }, [isAuthenticated])*/
-
   return (
     <StyledLoginContainer>
       <StyledTitleContainer>
@@ -84,9 +80,11 @@ const Login = () => {
       </StyledTitleContainer>
       <StyledFormContainer>
         <StyledForm onSubmit={handleFormSubmit}>
-          <Typography variant="body1" style={{ top: 0, marginLeft: 0 }}>
-            Please Login
-          </Typography>
+          <TitleContainer>
+            <Typography variant="h2" style={{ top: 0, marginLeft: 0 }}>
+              Please Login
+            </Typography>
+          </TitleContainer>
 
           <TextField
             id="outlined-basic"
@@ -117,21 +115,45 @@ const Login = () => {
               ),
             }}
           />
-          <Button type="submit" style={{ width: '100%' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            style={{ width: '100%' }}
+          >
             Login
           </Button>
         </StyledForm>
-        <Typography variant="body1" sx={{ bottom: 0 }}>
-          Dont you have an account? Sign Up
-        </Typography>
+
+        <SignUpTextContainer>
+          <Typography
+            variant="body1"
+            style={{
+              display: 'inline-block',
+              alignSelf: 'flex-end',
+            }}
+          >
+            Dont you have an account?
+          </Typography>
+
+          <Typography
+            variant="body1"
+            style={{
+              display: 'inline-block',
+              alignSelf: 'flex-end',
+            }}
+          >
+            <a
+              href="https://my.autopi.io/#/login"
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              Signup
+            </a>
+          </Typography>
+        </SignUpTextContainer>
       </StyledFormContainer>
-      <button
-        onClick={() => {
-          handleLogout()
-        }}
-      >
-        TEST
-      </button>
     </StyledLoginContainer>
   )
 }

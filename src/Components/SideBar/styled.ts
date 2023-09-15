@@ -1,8 +1,7 @@
 import styled from '@emotion/styled'
-import { Drawer } from '@mui/material'
 
 export const Container = styled.div`
-  background-color: red;
+  //background-color: red;
 `
 
 export const TopContent = styled.div`

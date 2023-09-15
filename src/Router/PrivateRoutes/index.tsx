@@ -3,19 +3,21 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { GlobalState } from '../../Redux/Store'
 import CustomTopBar from '../../Components/CustomTopBar'
 import SideBar from '../../Components/SideBar'
+import { Container } from './styled'
 
 const PrivateRoute = () => {
   const { isAuthenticated } = useSelector((state: GlobalState) => state.user)
 
   return isAuthenticated ? (
-    <div>
+    <Container>
       <div style={{ width: '100%' }}>
         {' '}
         <CustomTopBar></CustomTopBar>
       </div>
       <SideBar></SideBar>
+
       <Outlet></Outlet>
-    </div>
+    </Container>
   ) : (
     <Navigate to="/login" />
   )

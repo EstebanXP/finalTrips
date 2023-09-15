@@ -9,6 +9,9 @@ import { theme } from './Theme/Theme'
 import store from './Redux/Store'
 import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
+import { QueryClient, QueryClientProvider } from 'react-query'
+
+const queryClient = new QueryClient()
 
 const persistor = persistStore(store)
 
@@ -18,7 +21,9 @@ root.render(
     <ThemeProvider theme={theme}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </PersistGate>
       </Provider>
     </ThemeProvider>

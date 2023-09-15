@@ -8,7 +8,9 @@ import { GlobalState } from '../../Redux/Store'
 const CustomTopBar = () => {
   const { openNavbar, closeNavbar } = actions
   const dispatch = useDispatch()
-  const { isNavbarOpen } = useSelector((state: GlobalState) => state.topbar)
+  const { isNavbarOpen, route } = useSelector(
+    (state: GlobalState) => state.topbar
+  )
 
   const handleClick = () => {
     if (isNavbarOpen) {
@@ -20,7 +22,7 @@ const CustomTopBar = () => {
   }
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed">
+      <AppBar position="static">
         <Toolbar>
           <IconButton
             size="large"
@@ -33,7 +35,7 @@ const CustomTopBar = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
+            {route || 'Home'}
           </Typography>
         </Toolbar>
       </AppBar>

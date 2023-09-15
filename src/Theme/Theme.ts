@@ -1,15 +1,21 @@
 import { createTheme } from '@mui/material/styles'
+import type {} from '@mui/x-data-grid-pro/themeAugmentation'
 
 export const theme = createTheme({
   typography: {
     fontFamily: 'Poppins',
     h1: {
+      fontSize: '32px',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      lineHeight: 'normal',
+    },
+    h2: {
       fontSize: '24px',
       fontStyle: 'normal',
       fontWeight: 500,
       lineHeight: 'normal',
     },
-    h2: {},
     h3: {
       fontSize: '18px',
       fontStyle: 'normal',
@@ -23,7 +29,7 @@ export const theme = createTheme({
       lineHeight: 'normal',
     },
     body2: {
-      fontSize: '14px',
+      fontSize: '12px',
       fontStyle: 'normal',
       fontWeight: 400,
       lineHeight: 'normal',
@@ -51,14 +57,17 @@ export const theme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        root: {
-          backgroundColor: '#1a202cf2',
-          color: '#fff',
-          textTransform: 'unset',
-          outline: '1px solid white',
+        containedPrimary: {
+          backgroundColor: '#1a202cf2', // Customize the primary contained button background color
           borderRadius: '8px',
           '&:hover': {
-            backgroundColor: 'gray',
+            backgroundColor: '#4C5566', // Customize the hover state
+          },
+        },
+        containedSecondary: {
+          backgroundColor: 'red', // Customize the secondary contained button background color
+          '&:hover': {
+            backgroundColor: 'darkred', // Customize the hover state
           },
         },
       },
@@ -70,11 +79,34 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          padding: '20px', // Adjust the padding as needed,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          //padding: '0px', // Change the padding
+        },
+      },
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
           backgroundColor: '#F5F5F5',
-          color: "black"
+          color: 'black',
+        },
+      },
+    },
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          '& .MuiDataGrid-cell:focus-within': {
+            outline: 'none !important',
+          },
         },
       },
     },
@@ -94,86 +126,12 @@ export const theme = createTheme({
         },
       },
     },
-  },
-})
-
-/*declare module '@mui/material/styles' {
-  interface Theme {
-    typographyColor: {
-      primaryText: React.CSSProperties['color']
-    }
-    extraBackgrounds: {
-      selectedItem: React.CSSProperties['color']
-    }
-    extraColors?: {
-      stroke01: React.CSSProperties['color']
-    }
-  }
-
-  interface ThemeOptions {
-    typographyColor: {
-      primaryText: React.CSSProperties['color']
-    }
-    extraBackgrounds: {
-      selectedItem: React.CSSProperties['color']
-    }
-    extraColors?: {
-      stroke01: React.CSSProperties['color']
-    }
-  }
-}
-
-declare module '@mui/material/styles/createTypography' {}
-
-declare module '@mui/material/Typography' {
-  interface TypographyPropsVariantOverrides {
-    //title: true
-    //alertText: true
-  }
-}*/
-
-/*
-
-export const theme = createTheme({
-  components: {
-    MuiTypography: {
-      defaultProps: {
-        variantMapping: {},
-      },
-    },
-    MuiCssBaseline: {
-      styleOverrides: {},
-    },
-    MuiButton: {
+    MuiMenuItem: {
       styleOverrides: {
-        containedPrimary: {
-          '&:hover': {
-            backgroundColor: '#990000', // Replace with your desired hover color
-          },
+        root: {
+          color: 'black',
         },
       },
     },
   },
-  typographyColor: {
-    primaryText: '#2F2F2F',
-  },
-  extraBackgrounds: {
-    selectedItem: '#01ECB4',
-  },
-  extraColors: {
-    stroke01: '#EEEEEE',
-  },
-  palette: {
-    primary: {
-      main: '#1976d2', // Replace with your desired button color
-      contrastText: '#fff',
-    },
-    secondary: {
-      main: '#dc004e',
-      contrastText: '#fff',
-    },
-  },
 })
-
-
-*/
